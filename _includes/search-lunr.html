@@ -1,0 +1,29 @@
+<script src="/assets/js/lunr.js"></script>
+
+<form id="siteSearchForm"
+onSubmit="site_search(document.getElementById('siteSearchInput').value); return false;"
+>
+<p>
+    <label for="siteSearchInput" id="search-button" title="Search" tabindex="-1"><i class="fa-solid fa-magnifying-glass"></i></label>
+    <div id="siteSearchBar">
+    <input
+      type="text"
+      id="siteSearchInput"
+      name="q"
+      maxlength="255"
+      value=""
+      placeholder="Search"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      onfocus="document.getElementById('siteSearchForm').onsubmit();window.gtag?.('event', 'site_search');"
+      oninput="document.getElementById('siteSearchForm').onsubmit();"
+      />
+      <div id="siteSearchResults">
+        <ul></ul>
+      </div>
+    </div>
+  </p>
+</form>
+
+<script src="/assets/js/search.js" async></script>

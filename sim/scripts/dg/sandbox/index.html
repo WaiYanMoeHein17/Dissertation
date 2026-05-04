@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ADER-DG Order-3 Predictor — WebGL2 Sandbox</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 920px;
+      margin: 2em auto;
+      padding: 0 1em;
+      line-height: 1.5;
+      color: #222;
+    }
+    h1 { font-size: 1.4em; }
+    p, li { font-size: 0.95em; }
+    code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+    canvas { display: block; margin: 1em 0; border: 1px solid #ccc; background: #fff; }
+    pre  { background: #f6f8fa; padding: 0.8em; border-radius: 5px; font-size: 0.85em; overflow-x: auto; }
+    .ok  { color: #1f7a1f; font-weight: 600; }
+    .bad { color: #b00020; font-weight: 600; }
+    .muted { color: #666; font-size: 0.85em; }
+    .legend span { margin-right: 1em; }
+    .swatch { display: inline-block; width: 1.2em; height: 0.4em; vertical-align: middle; margin-right: 0.3em; }
+  </style>
+</head>
+<body>
+  <h1>ADER-DG Order-3 Predictor — WebGL2 Sandbox</h1>
+  <p>
+    Full order-3 predictor: Forward-Euler initialisation at both
+    Gauss&ndash;Legendre nodes <em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>,
+    followed by one Picard refinement sweep. Four shader passes total
+    (no MRT yet). Test PDE: linear advection
+    <em>u<sub>t</sub></em> = &minus;<em>u<sub>x</sub></em>. Each pass is run
+    on the GPU; an identical computation is performed in JavaScript using
+    the same LGL differentiation matrix; the two are compared pointwise.
+  </p>
+  <p class="muted">
+    No three.js, no MRT, no boundary lifting. This validates the
+    element-local predictor stage end-to-end against a CPU reference.
+  </p>
+
+  <h2>Setup</h2>
+  <ul>
+    <li>Domain: <em>x</em> &isin; [0, 1], periodic.</li>
+    <li>Mesh: 16 elements &times; 4 LGL nodes per element = 64 texels in <em>x</em>.</li>
+    <li>Element width: 1/16 = 0.0625.</li>
+    <li>Initial state: <em>u</em>(<em>x</em>, 0) = sin(2&pi;<em>x</em>) sampled at LGL node positions.</li>
+    <li>Time step: &Delta;<em>t</em> = 0.001.</li>
+    <li>GL2 nodes: <em>c</em><sub>1</sub> &asymp; 0.2113, <em>c</em><sub>2</sub> &asymp; 0.7887.</li>
+    <li>Picard weight matrix: (a<sub>11</sub>, a<sub>12</sub>; a<sub>21</sub>, a<sub>22</sub>) = (1/4, c<sub>1</sub>&minus;1/4; c<sub>2</sub>&minus;1/4, 1/4).</li>
+    <li>One Picard sweep &rarr; combined order min(<em>k</em>+1, 2<em>p</em>) = min(3, 4) = 3.</li>
+  </ul>
+
+  <h2>Visualisation</h2>
+  <p class="legend">
+    <span><span class="swatch" style="background:#1f77b4"></span>u<sup>n</sup> (initial)</span>
+    <span><span class="swatch" style="background:#2ca02c"></span>q<sub>1</sub> CPU</span>
+    <span><span class="swatch" style="background:#d62728"></span>q<sub>1</sub> GPU</span>
+    <span><span class="swatch" style="background:#9467bd"></span>q<sub>2</sub> CPU</span>
+    <span><span class="swatch" style="background:#ff7f0e"></span>q<sub>2</sub> GPU</span>
+  </p>
+  <canvas id="plot" width="900" height="220"></canvas>
+
+  <h2>Verification</h2>
+  <pre id="output">running...</pre>
+
+  <script type="module" src="./sandbox.mjs"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+  <script src="{{ site.baseurl }}/assets/js/load_manifests.js"></script>
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/explore.css">
+
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+
+        <header class="post-header">
+          <h1 class="post-title">Explore</h1>
+        </header>
+
+        {{ content }}
+
+        <div class="top_container">
+            <iframe loading="lazy" id="sim" title="A simulation of a Keller-Segel equation" src="/sim/?preset=KellerSegel&initCond_1=RAND&initCond_2=RAND&numTimestepsPerFrame=25&lite&clean&sf=0.5" style="visibility:hidden"></iframe>
+            <div>
+                <p>There is a lot to explore with VisualPDE.</p>
+                <p>Check out our <a href=/visual-stories>Visual Stories</a> for accessible science, or dive into the full library of examples below.</p>
+            </div>
+        </div>
+        
+        <!-- <h2>Collections</h2>
+        <div class='home_tiles'>
+          <a class='home_tile' href='fluids'>
+            <div class='container'>
+              <img alt="Symmetric evolution of waves in a disk" src='/assets/images/Fluids.webp' />
+            </div>
+            <div class='container'>
+              <div class='title'>Fluids and waves</div>
+              <div class='subtitle'>Splash about with virtual fluids</div>
+            </div>
+          </a>
+          <a class='home_tile' href='visual-stories'>
+            <div class='container'>
+              <img alt="A crescent moon with text 'Once upon a time'" src='/assets/images/OnceUponATime.webp' />
+            </div>
+            <div class='container'>
+              <div class='title'>Visual Stories</div>
+              <div class='subtitle'>Not a mathematician? No problem</div>
+            </div>
+          </a> 
+        </div>
+
+        <br> -->
+        
+        <!-- <h2>Browse the library</h2> -->
+        <div class="filter_buttons">
+        </div>
+        <div id="library" class='topic_tiles'>
+          <p id="no_results">Sorry! Nothing in the library matches this combination of filters.</p>
+        </div>
+
+      </div>
+    </main>
+
+    {%- include footer.html -%}
+    {%- include mathjax.html -%}
+
+  </body>
+
+  <script type="text/javascript">
+  document.querySelector("iframe").addEventListener("load", function (e) {
+    this.style.visibility = "visible";
+    document.getElementById("sim").contentWindow.document.getElementById("play").click();
+    });
+  </script>
+
+  <script>
+    (async () => {
+        let documents = await loadDocs();
+
+        // Exclude user guide and topic pages.
+        let pages = documents
+        .filter((doc) => doc.layout === "page")
+        .filter((doc) => doc.url.indexOf("/user-guide/") === -1)
+        .filter((doc) => doc.url.indexOf("/about/") === -1);
+
+        // Sort the pages by page_number.
+        pages.sort((a, b) => a.page_number - b.page_number);
+
+        function startUpper(str) {
+          return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+				
+				function wordsStartUpper(str) {
+					return str.split(" ").map((x) => startUpper(x)).join(" ");
+				}
+
+        // For each page, add a topic tile and store the tags.
+        let topicTiles = document.getElementById("library");
+        let tags = new Set();
+        pages.forEach((page) => {
+          let topicTile = document.createElement("a");
+          topicTile.classList.add("topic_tile");
+          topicTile.href = page.url;
+          let topicBanner = document.createElement("img");
+          topicBanner.classList.add("topic_banner");
+          topicBanner.setAttribute("loading", "lazy");
+          topicBanner.src = page.thumbnail;
+          topicTile.appendChild(topicBanner);
+          let container = document.createElement("div");
+          container.classList.add("container");
+          if (page.tags) {
+            page.tags = new Set(page.tags.map((tag) =>  wordsStartUpper(tag)));
+            topicTile.tags = page.tags;
+            page.tags.forEach((x) => tags.add(x));
+            let tagList = document.createElement("div");
+            tagList.classList.add("tag_list");
+            tagList.textContent = Array.from(page.tags).join(" | ");
+            container.appendChild(tagList);
+          }
+          let title = document.createElement("div");
+          title.classList.add("title");
+          title.textContent = page.title;
+          container.appendChild(title);
+          let subtitle = document.createElement("div");
+          subtitle.classList.add("subtitle");
+          subtitle.textContent = page.extract;
+          container.appendChild(subtitle);
+          let equation = document.createElement("div");
+          equation.classList.add("subtitle_equation");
+          equation.innerHTML = page.equation || "";
+          container.appendChild(equation);
+          topicTile.appendChild(container);
+          topicTiles.appendChild(topicTile);
+        });
+
+        // Sort the tags alphabetically.
+        tags = new Set(Array.from(tags).sort());
+				let activeTags = new Set();
+
+        // For each tag, add a filter button.
+				// First, define a function for refreshing the list of pages.
+				function refreshLibrary() {
+					// Check if no filter buttons are active.
+          let noneActive = activeTags.size == 0;
+          let somethingShowing = false;
+          // Loop through topic tiles and display or hide them.
+          document.querySelectorAll(".topic_tile").forEach((tile) => {
+          if (noneActive || Array.from(activeTags).every((tag) => tile.tags.has(tag))) {
+              tile.style.display = "block";
+              somethingShowing = true;
+          } else {
+              tile.style.display = "none";
+          }
+          });
+          document.getElementById("no_results").style.display = somethingShowing ? "none" : "block";
+          document.getElementById("library").classList.toggle("no_results", !somethingShowing);
+          allButton.dataset.active = noneActive;
+          // Loop through the filter buttons and update their appearance.
+          document.querySelectorAll(".filter_button").forEach((button) => {
+            if (noneActive) {
+              button.dataset.active = button.textContent === "All";
+              window.location.hash = "";
+            } else {
+              button.dataset.active = activeTags.has(button.textContent);
+            }
+          });
+          typeset();
+				}
+				
+        let container = document.querySelector(".filter_buttons");
+				// Create an All button that disables all filters.
+				let allButton = document.createElement("button");
+				allButton.classList.add("filter_button");
+        allButton.id = "allButton"
+        allButton.textContent = "All";
+        allButton.dataset.active = true;
+				allButton.addEventListener("click", () => {
+          // Clear all active filters.
+          activeTags.clear();
+          // Refresh the library.
+          refreshLibrary();
+				});
+        container.appendChild(allButton);
+				
+				// Create filter buttons for each tag.
+        tags.forEach((tag) => {
+          let filterButton = document.createElement("button");
+          filterButton.id = "filter_button_" + tag.toLowerCase();
+          filterButton.classList.add("filter_button");
+          filterButton.textContent = tag;
+          filterButton.dataset.active = false;
+          filterButton.addEventListener("click", () => {
+              filterButton.dataset.active = filterButton.dataset.active != "true";
+              if (filterButton.dataset.active == "true") {
+                  activeTags.clear();
+                  activeTags.add(tag);
+                  window.location.hash = tag.toLowerCase();
+              } else {
+                  activeTags.delete(tag);
+              }
+              refreshLibrary();
+          });
+          container.appendChild(filterButton);
+        })
+
+        // Ensure typesetting of new content.
+        function typeset() {
+         if (MathJax.typesetPromise != undefined) {
+            MathJax.typesetPromise().then(() => {
+                    fitty("mjx-container[display='true']", { minSize: 5, maxSize: 32 });
+                    jQuery('mjx-container[display="true"]').css("width", "100%");
+                    
+                    fitty(".subtitle_equation mjx-container", { minSize: 5, maxSize: 16 });
+              }
+            );
+          }
+        }
+        typeset();
+
+        // If a tag is present in the URL, activate it.
+        if (window.location.hash) {
+          let tag = window.location.hash.slice(1);
+          let button = document.getElementById("filter_button_" + decodeURI(tag).toLowerCase());
+          if (button) {
+            button.click();
+          }
+        }
+    })();
+  </script>
+
+</html>

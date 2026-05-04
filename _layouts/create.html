@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+  <script src="{{ site.baseurl }}/assets/js/load_manifests.js"></script>
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/create.css">
+
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+
+        <header class="post-header">
+          <h1 class="post-title">Create</h1>
+        </header>
+
+        {{ content }}
+
+        <div class="top_container">
+            <iframe loading="lazy" id="sim" title="A simulation of a complex Ginzburg–Landau equation" src="/sim/?preset=complexGinzburgLandau&colourmap=water&numTimestepsPerFrame=30&lite&clean&sf=0.5" style="visibility:hidden"></iframe>
+            <div>
+                <p>Got your own equation? Simulate and share with VisualPDE's powerful creation tools.</p>
+                <p>Tour the customisable <a href="/sim/?tour">simulator</a>, get inspired by the tutorials below, or check out the <a href="/user-guide">documentation</a> for a complete guide to VisualPDE.</p>
+            </div>
+        </div>
+
+        <div class="video_container">
+          <p class="emphasize">New to VisualPDE? Get up and running in 6 minutes.</p>
+          <iframe class="tutorial_video" src="https://www.youtube-nocookie.com/embed/OXvGmlyKn4w?si=Yz-bdCho1ja0GHxg?modestbranding=1&iv_load_policy=3&cc_load_policy=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        
+        <p class="emphasize">Looking for more help? Check out these guides:</p>
+        <div class='topic_tiles' id="topic_tiles">
+          {% assign lessons = site["user-guide"] 
+            | sort: 'lesson_number' %}
+          
+            {% for item in lessons limit:3 %}
+              <a class='topic_tile' href='{{ item.url }}'>
+                <div class='topic_banner' style="background-image:url('{{ item.thumbnail }}')">
+                </div>
+                <div class='container'>
+									{% if item.video_length %}
+                  <div class="duration">Video {{ item.video_length}} | {{ item.read_length }} read</div>
+									{% endif %}
+                  <div class='title'>{{ item.title }}</div>
+                  <div class='subtitle'>{{ item.extract }}</div>
+                </div>
+              </a>
+            {% endfor %}
+        </div>
+
+      </div>
+    </main>
+
+    {%- include footer.html -%}
+    {%- include mathjax.html -%}
+
+  </body>
+
+  <script type="text/javascript">
+    document.querySelector("iframe").addEventListener("load", function (e) {
+    this.style.visibility = "visible";
+    document.getElementById("sim").contentWindow.document.getElementById("play").click();
+    });
+  </script>
+
+</html>

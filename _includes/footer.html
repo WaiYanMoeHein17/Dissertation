@@ -1,0 +1,61 @@
+<footer class="site-footer h-card">
+  <data class="u-url" href="{{ "/" | relative_url }}"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">{{ site.title | escape }}
+            <button class="darkmode-button" id="dark-on" onclick="toggleDarkMode(true,true)"><span><i class="fa-solid fa-moon"></i>Dark mode</span></button>
+            <button class="darkmode-button" id="light-on" onclick="toggleDarkMode(false,true)"><span><i class="fa-solid fa-sun"></i>Light mode</span></button>
+    </h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          {%- if site.email -%}
+          <li><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+          {%- endif -%}
+          <li class="p-name">
+            <p style="margin-bottom:0;">Read the <a style="color:unset;" href="https://doi.org/10.1007/s11538-023-01218-4">paper</a></p>
+            </li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        {%- include social.html -%}
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>Interactive solutions of partial differential equations, live on your device</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+<div id="reading-progress-gutter" style="display:none"></div>
+<div id="reading-progress" style="display:none"></div>
+<script src="{{ '/assets/js/reading_progress.js' | relative_url }}"></script>
+
+<script>
+// A function that enables GA if the user clicks "accept" on the cookie banner.
+  function enableGA() {
+    document.getElementById('cookie-banner').style.display='none';
+    localStorage.setItem("ga-consent", "true");
+    if (typeof gtag === "function") {
+      gtag("consent", "update", {
+        analytics_storage: "granted",
+      });
+      gtag_config();
+    }
+  }
+</script>
+<div id="cookie-banner">
+  <span>We use analytics cookies to evidence VisualPDE's impact to funders. By using this site, you consent to the use of cookies.</span>
+  <button class="cookie-button" onclick="enableGA()">Close</button>
+</div>
+<script>
+  if (!localStorage.getItem("ga-consent")) {
+    document.getElementById('cookie-banner').style.display = 'flex';
+  }
+</script>

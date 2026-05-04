@@ -1,0 +1,118 @@
+---
+equations: <span class='ui_button_documentation' id="equations">&nbsp;</span>
+settings: <span class='ui_button_documentation'><i class="fa-solid fa-wrench"></i></span>
+views: <span class='ui_button_documentation'><i class="fa-solid fa-layer-group"></i></span>
+play: <span class='ui_button_documentation'><i class="fa-solid fa-play"></i></span>
+pause: <span class='ui_button_documentation'><i class="fa-solid fa-pause"></i></span>
+erase: <span class='ui_button_documentation'><i class="fa-solid fa-arrow-rotate-left"></i></span>
+restart: <span class='ui_button_documentation'><i class="fa-solid fa-arrow-rotate-left"></i></span>
+help: <span class='ui_button_documentation'><i class="fa-solid fa-circle-question"></i></span>
+share: <span class='ui_button_documentation'><i class="fa-solid fa-share-from-square"></i></span>
+screenshot: <span class='ui_button_documentation'><i class="fa-solid fa-camera"></i></span>
+link: <span class='ui_button_documentation'><i class="fa-solid fa-link"></i></span>
+stop_recording: <span class='ui_button_documentation' id="stop_recording"><i class="fa-solid fa-video-slash"></i></span>
+dark_mode_button: <span class='ui_button_documentation' id="dark-mode-button"><i class="fa-solid fa-moon"></i></span>
+light_mode_button: <span class='ui_button_documentation' id="light-mode-button"><i class="fa-solid fa-sun"></i></span>
+---
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+  <script type="module" src="/assets/js/related_posts.js" async></script>
+
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+
+        <header class="post-header">
+          <h1 class="post-title">{{ page.title }}</h1>
+          <div class="tag_list">
+        </div>
+        </header>
+        <!-- If categories have been given, assign them to a JS variable and assign links to them in the tag_list -->
+        <script>
+          window.specifiedCategories = [];
+          {% if page.categories %}
+          window.specifiedCategories = {{ page.categories | jsonify }};
+          {% endif %}
+          if (window.specifiedCategories.length > 0) {
+            // Sort the categories alphabetically
+            window.specifiedCategories.sort();
+            var tag_list = document.getElementsByClassName("tag_list")[0];
+            for (var i = 0; i < window.specifiedCategories.length; i++) {
+              var tag = window.specifiedCategories[i];
+              var tag_link = document.createElement("a");
+              // URI encode the tag and add it to the URL as an anchor on the explore page.
+              tag_link.href = "/explore.html#" + encodeURIComponent(tag);
+              // Format the tag so that each word has the first letter captialised.
+              tag_link.innerHTML = tag.split(" ").map(function(word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+              }).join(" ");
+              tag_list.appendChild(tag_link);
+              // If there is another category, add a space and a |.
+              if (i < window.specifiedCategories.length - 1) {
+                tag_list.innerHTML += " | ";
+              }
+            }
+          }
+
+        </script>
+
+        {{ content }}
+        
+        <hr style="margin-top:2em;margin-bottom:2em;color:var(--tile-border-color)">
+      </div>
+      
+      <div id="related_posts_wrapper" class="hiddenPost">
+        
+        <p class="emphasize" id="try_out_highlight">Looking for something similar? Try out these related examples:</p>
+
+        <div id="related_posts-container" class="hiddenPost">
+            <a class='topic_tile related_post hiddenPost'>
+              <div class='topic_banner'>
+              </div>
+              <div class='container'>
+                <div class='title'></div>
+                <div class='subtitle'></div>
+              </div>
+            </a>
+            <a class='topic_tile related_post hiddenPost'>
+              <div class='topic_banner'>
+              </div>
+              <div class='container'>
+                <div class='title'></div>
+                <div class='subtitle'></div>
+              </div>
+            </a>
+            <a class='topic_tile related_post hiddenPost'>
+              <div class='topic_banner'>
+              </div>
+              <div class='container'>
+                <div class='title'></div>
+                <div class='subtitle'></div>
+              </div>
+            </a>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- If there are any related posts specified in the frontmatter, initialise a JS variable with those posts as strings -->
+    <script>
+      window.specifiedRelatedPosts = [];
+      {% if page.related_posts %}
+      window.specifiedRelatedPosts = {{ page.related_posts | jsonify }};
+      {% endif %}
+    </script>
+
+    <!-- If tags have been specified, initialise a JS variable so that links can be added -->
+
+    {%- include footer.html -%}
+    {%- include mathjax.html -%}
+
+  </body>
+
+</html>

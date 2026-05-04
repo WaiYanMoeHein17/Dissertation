@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    window.MathJax = {
+        loader: {
+            load: ['ui/menu', '[tex]/ams']
+        },
+        tex: {
+            macros: {
+                pd: ["\\frac{\\partial #1}{\\partial #2}", 2],
+                pdd: ["\\frac{\\partial^2 #1}{\\partial #2^2}", 2],
+                pdn: ["\\frac{\\partial^{#3} #1}{\\partial #2^{#3}}", 3],
+                vnabla: "\\boldsymbol{\\nabla}",
+                m: ["{\\large\\symbfsfit{#1}}", 1],
+                v: ["\\boldsymbol{#1}", 1],
+                d: "\\mathrm{d}",
+                i: "\\mathrm{i}",
+                dx: "\\mathrm{dx}",
+                dy: "\\mathrm{dy}",
+                dt: "\\mathrm{dt}",
+                stepx: "\\Delta\\mathrm{x}",
+                stepy: "\\Delta\\mathrm{y}",
+                stept: "\\Delta\\mathrm{t}",
+                domain: "\\mathit{\\Omega}",
+                boundary: "\\partial\\mathit{\\Omega}",
+                onboundary: "\\vert_{\\boundary}",
+                floor: ["\\left\\lfloor#1\\right\\rfloor", 1],
+                ind: ["\\mathbb{1}_{#1}", 1],
+                diff: ["\\frac{\\d #1}{\\d #2}", 2],
+                abs: ["\\left\\lvert#1\\right\\rvert", 1],
+                e: "\\mathrm{e}"
+            },
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        startup: {
+            ready: () => {
+                MathJax.startup.defaultReady();
+                MathJax.startup.promise.then(() => {
+                    fitty("mjx-container[display='true']", { minSize: 5, maxSize: 32 });
+                    jQuery('mjx-container[display="true"]').css("width", "100%");
+
+                    fitty(".subtitle_equation mjx-container", { minSize: 5, maxSize: 16 });
+                    // jQuery('.subtitle_equation mjx-container').css("width", "100%");
+                });
+            }
+        }
+    };
+</script>
+
+<!-- Only load MathJax if we're not at root of the site, speeding up blocking load -->
+<script type="text/javascript">
+    if (!window.location.pathname.match(/^\/$/)) {
+        document.write('<script id="MathJax-script" async src="../assets/js/mathjax/es5/tex-chtml-full.js"><\/script>')
+    }
+</script>
+
+<script src="../assets/js/fitty.min.js"></script>

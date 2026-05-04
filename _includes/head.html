@@ -1,0 +1,96 @@
+<head>
+  <link rel="manifest" href="/manifest.json" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- seo -%}
+  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
+  {%- feed_meta -%}
+  {%- if jekyll.environment == 'production' and site.google_analytics -%}
+    {%- include google-analytics.html -%}
+  {%- endif -%}
+
+  {%- include custom-head.html -%}
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-touch-icon.webp">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.webp">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.webp">
+  <link rel="manifest" href="/assets/favicons/site.webmanifest">
+  <link rel="mask-icon" href="/assets/favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/assets/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/assets/favicons/browserconfig.xml">
+  <meta name="theme-color" content="#dfdfdf">
+  <meta name="twitter:card" content="summary" /> 
+  {% if page.title != "VisualPDE" %}
+    {% assign title = page.title | append: ' | VisualPDE' %}
+  {% endif %}
+  <meta name="description" content="{{ page.extract | default: 'VisualPDE brings interactive science and mathematics to the web. Explore topics including waves, viruses and reaction—diffusion patterns, or create your own simulation.' }}" />
+  <meta name="twitter:site:id" content="@visualpde" /> 
+  <meta name="twitter:title" content="{{ title | default: 'VisualPDE' }}" /> 
+  <meta name="twitter:description" content="{{ page.extract | default: 'VisualPDE brings interactive science and mathematics to the web. Explore topics including waves, viruses and reaction—diffusion patterns, or create your own simulation.' }}" /> 
+  <meta name="twitter:image" content="{{ site.url }}{{ page.thumbnail | default: '/assets/favicons/twitter-icon.webp' }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{{ title | default: 'VisualPDE' }}" />
+  <meta property="og:description" content="{{ page.extract | default: 'VisualPDE brings interactive science and mathematics to the web. Explore topics including waves, viruses and reaction—diffusion patterns, or create your own simulation.' }}" />
+  <meta property="og:image" content="{{ site.url }}{{ page.thumbnail | default: '/assets/favicons/android-chrome-1200x630.png' }}" />
+  <meta property="og:url" content="https://visualpde.com" />
+  <meta property="og:site_name" content="VisualPDE" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google-site-verification" content="ugeW31yIRGSztE-CPYG3CnFCObe7pqk91umfk06TSAI"/>
+
+  <script src="/assets/js/dark_mode.js"></script>
+	
+	<script src="/assets/js/load_manifests.js"></script>
+
+  <script>
+    // If the window is very narrow, use a smaller domain in any iframe simulations.
+    if (window.innerWidth < 600) {
+      window.addEventListener("DOMContentLoaded", function() {
+        // For each .sim element without an sf parameter in the query string, modify the URL to include a domain scale factor.
+        [...document.getElementsByClassName('sim')].forEach(el => {
+          if (!el.src) return;
+          const url = new URL(el.src);
+          if (/[?&]/.test(url.search)) {
+            const params = new URLSearchParams(url.search);
+            // If there's an sf specified, do not modify.
+            if (!params.has("sf")) {
+              el.src += "&sf=0.5";
+            }
+          } else {
+            el.src += "?sf=0.5";
+          }
+        })
+      });
+    }
+  </script>
+
+  <script>
+    // If we're on mobile, replace click with tap and clicking with tapping.
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      window.addEventListener("DOMContentLoaded", function() {
+        $('p,span,h1,h2,h3,h4,h5').each(function(index, element){
+          let str = element.innerHTML;
+          str = str.replaceAll(/\bclicked\b/g, "tapped");
+          str = str.replaceAll(/\bClicked\b/g, "Tapped");
+          str = str.replaceAll(/\bclicking\b/g, "tapping");
+          str = str.replaceAll(/\bClicking\b/g, "Tapping");
+          str = str.replaceAll(/\bclick\b/g, "tap");
+          str = str.replaceAll(/\bClick\b/g, "Tap");
+          element.innerHTML = str;
+        });
+      });
+    }
+
+    // Add a non-breaking zero-width space after all – in anchor tags.
+    window.addEventListener("DOMContentLoaded", function() {
+      $('a').each(function(index, element){
+        element.innerHTML = element.innerHTML.replaceAll(/–/g, "–&#65279;");
+      });
+    });
+  </script>		
+
+  <script src="/sim/scripts/register_sw.js" async></script>
+
+</head>
