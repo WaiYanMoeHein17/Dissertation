@@ -61,21 +61,9 @@ server described below).
 
 ## Trying ADER-DG in the browser
 
-The browser path defaults to a **visual mode** that silently runs the
-midpoint method when the user picks ADER3 / ADER4 in the timestepping
-dropdown. This keeps the demo visually clean (no LGL element artefacts on
-screen) without affecting any of the dissertation's CPU/Float64 numbers.
-
-To run the actual ADER-DG pipeline (for examiner verification or
-benchmarking on the GPU), append `?aderVisualMode=false` to the URL:
-
 ```
-http://localhost:4000/sim/?preset=ShallowWaterEqns&timesteppingScheme=ADER4&dt=0.003&aderVisualMode=false
+http://localhost:4000/sim/?preset=ShallowWaterEqns
 ```
-
-The `dt` value above is conservative — feel free to lower it if the
-problem destabilises at your chosen brush amplitude. Visual-mode demos
-can use the preset's default `dt = 0.005`.
 
 ## Convention
 
@@ -87,19 +75,7 @@ where `p` is the polynomial degree of the LGL basis. So:
 | `ADER3` | 2 | 3 | 3 |
 | `ADER4` | 3 | 4 | 4 |
 
-The CPU benchmark also tests `p ∈ {1, 4}` for orders 2 and 5; the GPU
-pipeline only ships `p ∈ {2, 3}` because those are the orders the
-dissertation reports for browser-side performance.
-
 ---
-
-## Interactive solutions of partial differential equations, live on your device.
-
-VisualPDE is a browser-based simulator of a broad range of [partial differential equations](https://en.wikipedia.org/wiki/Partial_differential_equation), with solve-as-you-type speed and no knowledge of numerical methods required.
-
-The site, hosted at [VisualPDE.com](https://visualpde.com), contains a range of educational and scientific material, including a collection of Visual Stories written with the layperson in mind.
-
-For more information on the technology and philosophy behind VisualPDE, check out our [open-access publication](https://doi.org/10.1007/s11538-023-01218-4).
 
 ## Hosting a local copy
 
@@ -135,7 +111,3 @@ This can then be served with any local webserver. For instance, with Python3 ins
 cd path/to/visual-pde
 python3 -m http.server
 ```
-
-## Having trouble?
-
-VisualPDE has extensive documentation, so we recommend trying out any suggestions found on the main site. For anything else, please get in touch with us on [hello@visualpde.com](mailto:hello@visualpde.com) or raise an issue on GitHub.
